@@ -17,7 +17,7 @@
             <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg sm:rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all">
                 <div class="bg-gradient-to-r from-green-400 to-green-600 px-4 py-3 sm:px-6 sm:py-4">
                     <div class="flex items-center gap-2">
-                        <h3 class="text-base sm:text-lg font-semibold text-white">👥 Chat Room</h3>
+                        <h3 class="text-base sm:text-lg font-semibold text-white">👥 Chat World</h3>
                         <span class="hidden xs:inline-block px-2 py-1 text-xs bg-green-700 bg-opacity-50 rounded-full">Live</span>
                     </div>
                     <p class="text-xs sm:text-sm text-green-100 mt-1">chat in real-time.</p>
