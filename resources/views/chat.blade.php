@@ -20,7 +20,7 @@
                         <h3 class="text-base sm:text-lg font-semibold text-white">👥 Chat Room</h3>
                         <span class="hidden xs:inline-block px-2 py-1 text-xs bg-green-700 bg-opacity-50 rounded-full">Live</span>
                     </div>
-                    <p class="text-xs sm:text-sm text-green-100 mt-1">Connect and chat in real-time.</p>
+                    <p class="text-xs sm:text-sm text-green-100 mt-1">chat in real-time.</p>
                 </div>
 
                 <div class="p-3 sm:p-4 bg-gray-50 dark:bg-gray-800">
