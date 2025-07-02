@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="p-3 sm:p-4 bg-gray-50 dark:bg-gray-800">
-                    @livewire('chats')
+                    @livewire('chat')
                 </div>
             </div>
         </div>
