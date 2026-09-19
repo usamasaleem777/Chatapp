@@ -4,7 +4,9 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use App\Models\Message;
+use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use App\Events\MessageSent;
 
@@ -15,16 +17,11 @@ class Chat extends Component
     public $message = '';
     public $chatMessages = [];
 
+    protected $listeners = ['incomingMessage' => 'receiveMessage'];
+
     public function mount()
     {
         $this->users = User::where('id', '!=', Auth::id())->get();
-    }
-
-    public function getListeners()
-    {
-        return [
-            'echo-private:chat.' . Auth::id() . ',.private.message.sent' => 'receiveMessage',
-        ];
     }
 
     public function selectUser($userId)
@@ -54,13 +51,21 @@ class Chat extends Component
 
         $msg->load('sender');
 
-        broadcast(new MessageSent(
-            Auth::user(),
-            $this->selectedUser->id,
-            $msg->id,
-            $msg->message,
-            $msg->created_at->toISOString()
-        ))->toOthers();
+        try {
+            broadcast(new MessageSent(
+                Auth::user(),
+                $this->selectedUser->id,
+                $msg->id,
+                $msg->message,
+                $msg->created_at->toISOString()
+            ))->toOthers();
+        } catch (BroadcastException $exception) {
+            Log::warning('Chat message broadcast failed.', [
+                'message_id' => $msg->id,
+                'receiver_id' => $this->selectedUser->id,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         $this->chatMessages->push($msg);
         $this->message = '';

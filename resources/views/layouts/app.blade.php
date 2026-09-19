@@ -66,6 +66,18 @@
 
             window.addEventListener('chat-message-sent', playMessageSound);
             window.addEventListener('chat-message-received', playMessageSound);
+
+            @auth
+                if (window.Echo && window.Livewire) {
+                    window.Echo.private('chat.{{ auth()->id() }}')
+                        .listen('.private.message.sent', event => {
+                            console.log('Private chat message received:', event);
+                            window.Livewire.emit('incomingMessage', event);
+                        });
+                } else {
+                    console.warn('Echo or Livewire is not ready for private chat.');
+                }
+            @endauth
         });
     </script>
 
