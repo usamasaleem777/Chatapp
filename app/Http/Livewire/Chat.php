@@ -15,11 +15,16 @@ class Chat extends Component
     public $message = '';
     public $chatMessages = [];
 
-    protected $listeners = ['privateMessageReceived' => '$refresh'];
-
     public function mount()
     {
         $this->users = User::where('id', '!=', Auth::id())->get();
+    }
+
+    public function getListeners()
+    {
+        return [
+            'echo-private:chat.' . Auth::id() . ',.private.message.sent' => 'receiveMessage',
+        ];
     }
 
     public function selectUser($userId)
@@ -47,10 +52,35 @@ class Chat extends Component
             'message' => $this->message,
         ]);
 
-        broadcast(new MessageSent(Auth::user(), $this->selectedUser->id, $this->message))->toOthers();
+        $msg->load('sender');
+
+        broadcast(new MessageSent(
+            Auth::user(),
+            $this->selectedUser->id,
+            $msg->id,
+            $msg->message,
+            $msg->created_at->toISOString()
+        ))->toOthers();
 
         $this->chatMessages->push($msg);
         $this->message = '';
+        $this->dispatchBrowserEvent('chat-message-sent');
+    }
+
+    public function receiveMessage($payload)
+    {
+        if (! $this->selectedUser || (int) $this->selectedUser->id !== (int) $payload['senderId']) {
+            return;
+        }
+
+        $message = Message::with('sender')->find($payload['messageId']);
+
+        if (! $message) {
+            return;
+        }
+
+        $this->chatMessages->push($message);
+        $this->dispatchBrowserEvent('chat-message-received');
     }
 
     public function render()

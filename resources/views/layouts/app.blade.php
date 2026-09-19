@@ -46,33 +46,28 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Preload Audio -->
-  <audio id="msg-sound" src="{{ asset('sounds/message.mp3') }}" preload="auto"></audio>
+    <audio id="msg-sound" src="{{ asset('sounds/message.mp3') }}" preload="auto"></audio>
 
-    <!-- Laravel Echo Listener for Private Chat -->
-<script>
-    document.addEventListener('livewire:load', function () {
-        const form = document.getElementById('chat-form');
-        const audio = document.getElementById('msg-sound');
+    <!-- Chat sound events -->
+    <script>
+        document.addEventListener('livewire:load', function () {
+            const audio = document.getElementById('msg-sound');
 
-        if (!form) {
-            console.warn("⚠️ chat-form not found");
-            return;
-        }
-        if (!audio) {
-            console.warn("⚠️ msg-sound not found");
-            return;
-        }
+            const playMessageSound = () => {
+                if (!audio) {
+                    return;
+                }
 
-        form.addEventListener('submit', () => {
-            // Slight delay to ensure Livewire doesn't interrupt playback
-            setTimeout(() => {
-                audio.play()
-                    .then(() => console.log("✅ Send sound played"))
-                    .catch(err => console.warn("❌ Sound blocked:", err));
-            }, 50); // Slight delay helps with some Livewire sync issues
+                audio.currentTime = 0;
+                audio.play().catch(error => {
+                    console.warn('Message sound blocked:', error);
+                });
+            };
+
+            window.addEventListener('chat-message-sent', playMessageSound);
+            window.addEventListener('chat-message-received', playMessageSound);
         });
-    });
-</script>
+    </script>
 
 </body>
 </html>
